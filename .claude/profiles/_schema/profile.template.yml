@@ -1,0 +1,63 @@
+# =============================================================================
+# stack profile TEMPLATE — 新しいスタックを追加するときにコピーして埋める
+# =============================================================================
+# 使い方:
+#   1. これを profiles/<id>/profile.yml にコピーする。
+#   2. <...> と TODO を実値で埋める。項目の意味・必須/任意は ./contract.md を参照。
+#   3. 機械検証の道具（arch_lint / test / gates）が無い項目は、値を null にし
+#      「# NOTE: 理由と代替」を必ず添える（黙って空にしない）。
+#   4. 見本は ../python-fastapi/profile.yml。
+# =============================================================================
+
+id: <stack-id>                     # 例: node-express / go-hexagonal
+description: <一行の説明>
+runtime:
+  <component>: <language x.y>
+package_manager:
+  <component>: <tool>              # lockfile もコミットする
+
+components:
+  - name: <component>              # 例: backend
+    root: <dir>/
+
+    # ② Clean Architecture 強制 --------------------------------------------
+    architecture:
+      style: clean-architecture
+      layers:                       # コア固定の4層 → 実ディレクトリ（外→内）
+        - { name: infrastructure, path: <...> }
+        - { name: adapters,       path: <...> }
+        - { name: application,    path: <...> }
+        - { name: domain,         path: <...> }   # 最内・依存ゼロ
+      forbidden_imports:            # 各層が持ち込んではいけない外部FW
+        domain:      [ <web-fw>, <orm>, <validation-lib>, ... ]
+        application: [ <web-fw>, <orm>, <validation-lib>, ... ]
+      guard_inner_paths:            # 編集時フックが守る内側パス
+        - <domain path>/
+        - <application path>/
+      arch_lint_cmd: <cmd>          # 依存方向の機械検証（無ければ null ＋ NOTE）
+      persistence:                  # DBありなら埋める（無ければ節ごと削除可）
+        orm_only: true
+        forbidden_patterns: [ <raw-sql-openings> ]
+        detect_cmd: <cmd>
+      composition_root: <path>      # DI 結線の場所
+
+    # ③ テスト強制 ----------------------------------------------------------
+    testing:
+      bdd_runner: <tool>            # @backend を実行可能テストに束ねる道具
+      e2e_runner: <tool | null>     # UIありなら必須
+      step_defs_location: <dir>/
+      gherkin_source: "specs/<feature>/acceptance.feature"   # コア固定を明示
+      test_cmd: <cmd>
+      e2e_cmd: <cmd | null>
+
+    # ④ 品質ゲート ----------------------------------------------------------
+    quality_gates:
+      lint_cmd: <cmd>
+      format_check_cmd: <cmd>
+      typecheck_cmd: <cmd>          # strict 型
+      complexity_cmd: <cmd | null>  # 任意
+      build_cmd: <cmd | null>       # ビルド対象があるなら必須
+
+enforcement:
+  test_required: true               # 未テスト=未完了
+  run_on: [pre-commit, ci]

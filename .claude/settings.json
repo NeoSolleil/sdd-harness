@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/profiles/apply.py\" --auto || python3 \"$CLAUDE_PROJECT_DIR/.claude/profiles/apply.py\" --auto"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_architecture.py\" || python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_architecture.py\""
+          },
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_sdd_gates.py\" || python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_sdd_gates.py\""
+          },
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_harness.py\" || python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_harness.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_no_verify.py\" || python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_no_verify.py\""
+          },
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_architecture.py\" || python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_architecture.py\""
+          },
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_sdd_gates.py\" || python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_sdd_gates.py\""
+          },
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_harness.py\" || python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_harness.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+# Build output / generated
+dist/
+coverage/
+
+# Test artifacts (Playwright)
+playwright-report/
+test-results/
+blob-report/
+
+# Dependency lockfile (managed by npm, not Prettier)
+package-lock.json

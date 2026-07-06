@@ -1,0 +1,77 @@
+# ---- Python (backend) ----
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+.env.*
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Test / coverage / type-check caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# SQLite (local dev DB)
+*.db
+*.sqlite
+*.sqlite3
+
+# ---- Node (frontend) ----
+node_modules/
+# Vite / build output
+frontend/dist/
+dist/
+.vite/
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- Editor / OS ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# ---- Claude Code（ユーザーローカル設定。共有しない）----
+.claude/settings.local.json
+
+# ---- stack profile による生成物（apply.py が active プロファイルから配置）----
+# 単一の真実は .claude/profiles/<id>/ 側。.claude/ 直下への配置物は生成物なので追跡しない。
+# （core の rules/skills/agents は無い前提: rules は全て profile 由来）
+.claude/.profile-applied
+.claude/rules/
+.claude/skills/backend-architecture/
+.claude/skills/frontend-architecture/
+.claude/skills/design/
+.claude/skills/e2e-testing/
+.claude/agents/backend-engineer.md
+.claude/agents/frontend-engineer.md
+
+# ---- ローカル専用ドキュメント（個人の作業メモ。共有しない）----
+HANDOFF.md
+
+# ---- 再現性: lockfile はコミットする（無視しない） ----
+# uv.lock と package-lock.json は意図的に追跡対象。
+# 万一上のパターンに巻き込まれても確実に追跡されるよう明示的に除外を解除する。
+!uv.lock
+!package-lock.json

@@ -1,0 +1,112 @@
+# GitHub Actions CI（ハーネス層③b・無料枠）。
+# push(main) と pull_request で、pre-commit と同じ品質チェックを再実行する権威ある関門。
+# backend は uv、frontend は npm。lockfile（uv.lock / package-lock.json）で再現性を担保。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# 同一ブランチの古い実行はキャンセル（無料枠の節約）。
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  harness:
+    name: harness (guards / profile contract)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard self-tests (no_verify / architecture / sdd_gates)
+        run: python3 .claude/hooks/test_guards.py
+
+      - name: Profile contract validation
+        run: python3 .claude/profiles/validate.py
+
+  backend:
+    name: backend (uv / Clean Architecture)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies (uv sync)
+        run: uv sync
+
+      - name: Ruff check (lint)
+        run: uv run ruff check .
+
+      - name: Ruff format --check
+        run: uv run ruff format --check .
+
+      - name: Pyright (strict)
+        run: uv run pyright
+
+      - name: import-linter (Clean Architecture layers + forbidden)
+        run: uv run lint-imports
+
+      - name: xenon (complexity)
+        run: uv run xenon --max-absolute B --max-modules B --max-average A app
+
+      - name: No raw SQL (ORM only)
+        run: bash scripts/check_no_raw_sql.sh
+
+      - name: pytest
+        run: |
+          set +e
+          uv run pytest
+          code=$?
+          # exit 5 = no tests collected. 最初の機能でテストが入るまでは許容する。
+          if [ "$code" -eq 5 ]; then
+            echo "::notice::No tests collected yet (pytest exit 5) — tolerated until the first feature lands."
+            exit 0
+          fi
+          exit "$code"
+
+  frontend:
+    name: frontend (Vite / TypeScript strict)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies (npm ci)
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Prettier --check
+        run: npm run format:check
+
+      - name: tsc (strict typecheck)
+        run: npm run typecheck
+
+      - name: dependency-cruiser (Clean Architecture / 依存方向)
+        run: npm run arch:check
+
+      - name: Vitest
+        # テスト未作成のうちは --passWithNoTests で許容（最初の機能で実テストが入る）。
+        run: npm run test -- --passWithNoTests
+
+      - name: Vite build
+        run: npm run build

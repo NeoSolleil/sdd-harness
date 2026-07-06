@@ -1,0 +1,173 @@
+# =============================================================================
+# stack profile: python-fastapi
+# =============================================================================
+# 共有ハーネス（.claude/ の SDDワークフロー・不変条件）が要求する「契約」を、
+# このスタック（Python + FastAPI + React）の具体的な道具で満たすマニフェスト。
+#
+# 原則:
+#   - コアが固定する前提（CAの4層と依存方向 / TDD / Gherkin正本 /
+#     @R-x・@backend・@e2e タグ / specs/ の場所）はここに書かない。
+#   - ここに書くのは「その前提を、このスタックの道具でどう満たすか」だけ。
+#   - 具体値はこの1枚に隔離する。散文（skills/agents/rules）側は無編集で固定する。
+#
+# 契約の各項目の意味・必須/任意は ../_schema/contract.md を参照。
+# =============================================================================
+
+id: python-fastapi
+description: Python 3.13 + FastAPI backend / React 19 + Vite frontend
+runtime:
+  backend: Python 3.13
+  frontend: Node.js LTS
+package_manager:
+  backend: uv          # lockfile: uv.lock
+  frontend: npm        # lockfile: package-lock.json
+
+# このスタックは2コンポーネント。各々が独立に CA・テスト・品質ゲートを持つ。
+components:
+
+  # ---------------------------------------------------------------------------
+  - name: backend
+    root: backend/
+
+    # ② Clean Architecture 強制 ---------------------------------------------
+    architecture:
+      style: clean-architecture
+      # コア固定の4層 → 実ディレクトリ。順序は「外→内」（最後が最内=依存されるだけ）。
+      # import-linter の layers 契約と一致させる。
+      layers:
+        - { name: infrastructure, path: backend/app/infrastructure }
+        - { name: adapters,       path: backend/app/adapters }        # api / schemas
+        - { name: application,    path: backend/app/application }
+        - { name: domain,         path: backend/app/domain }          # 最内・依存ゼロ
+      # 各層が import してはいけないモジュール（外部FW）。guard hook と arch lint が読む。
+      forbidden_imports:
+        domain:
+          - fastapi
+          - starlette
+          - sqlalchemy
+          - pydantic
+          - pydantic_settings
+          - uvicorn
+        application:            # domain のみ依存。FW・ORM・Pydantic も不可（厳密版CA）
+          - fastapi
+          - starlette
+          - sqlalchemy
+          - pydantic
+          - pydantic_settings
+          - uvicorn
+      # 編集時フック（guard_architecture 相当）が「内側」として守るパス。
+      guard_inner_paths:
+        - backend/app/domain/
+        - backend/app/application/
+      # 依存方向を機械検証するコマンド（CI・pre-commit・spec-compliance が実行）。
+      arch_lint_cmd: "cd backend && uv run lint-imports"   # import-linter
+      # 永続化の「書き方」禁止（直接SQL禁止＝ORM必須）。import-linter では検知不能。
+      persistence:
+        orm_only: true
+        forbidden_patterns:                                 # 生SQL口
+          - "text("
+          - "exec_driver_sql("
+        detect_cmd: "bash backend/scripts/check_no_raw_sql.sh"
+      # DI結線の場所（抽象↔具象の配線）。
+      composition_root: backend/app/main.py
+
+    # ③ テスト強制 -----------------------------------------------------------
+    testing:
+      # @backend シナリオを実行可能テストに束ねる道具。
+      bdd_runner: pytest-bdd
+      step_defs_location: backend/tests/step_defs/
+      # Gherkin原本はコア固定の specs/<feature>/acceptance.feature を相対参照（コピー禁止）。
+      gherkin_source: "specs/<feature>/acceptance.feature"
+      # テスト実行（TDDゲート＆ test-coverage レビュアーが実行）。
+      test_cmd: "cd backend && uv run pytest"
+
+    # ④ 品質ゲート -----------------------------------------------------------
+    quality_gates:
+      lint_cmd:         "cd backend && uv run ruff check ."
+      format_check_cmd: "cd backend && uv run ruff format --check ."
+      typecheck_cmd:    "cd backend && uv run pyright"                 # strict
+      complexity_cmd:   "cd backend && uv run xenon --max-absolute B --max-modules B --max-average A app"
+
+  # ---------------------------------------------------------------------------
+  - name: frontend
+    root: frontend/
+
+    # ② アーキ強制 -----------------------------------------------------------
+    architecture:
+      # frontend は Clean Architecture ＋ Atomic Design ＋ Smart/Dumb 分離。
+      # backend の4層とは形が異なるため、責務ディレクトリで表現する。
+      style: clean-architecture+atomic
+      layers:
+        - { name: components, path: frontend/src/components }  # UI（Dumb・表示専念）
+        - { name: canvas,     path: frontend/src/canvas }      # 描画ロジック（Reactから分離）
+        - { name: api,        path: frontend/src/api }         # バックエンド呼び出し集約
+      # frontend は「書き方」規則（fetch直書き禁止→src/api経由、any禁止）と、
+      # dependency-cruiser による依存方向の機械検証の二本立て（ルールは frontend/.dependency-cruiser.cjs が正）。
+      forbidden_patterns:
+        outside_api_dir:
+          - "fetch("        # コンポーネント内での直書き禁止（src/api に集約）
+        anywhere:
+          - ": any"         # TypeScript strict: any 禁止（unknown＋絞り込み）
+      # 責務ディレクトリ間の依存方向を機械検証（lib純粋・api は pages のみ・canvas 分離・循環禁止）。
+      arch_lint_cmd: "cd frontend && npm run arch:check"   # dependency-cruiser
+      composition_root: null
+
+    # ③ テスト強制 -----------------------------------------------------------
+    testing:
+      bdd_runner: vitest            # 単体・結合
+      # @e2e は playwright-bdd を計画。現状 未配線（npm script 無し・CIはVitestのみ・
+      # .features-gen は生成物のみ）。実装機能が入る段階で e2e_cmd を配線する。
+      e2e_runner: playwright-bdd    # planned / 未配線
+      step_defs_location: null      # NOTE: playwright-bdd 導入時に frontend/e2e/steps/ を配線（e2e_cmd と同時）
+      gherkin_source: "specs/<feature>/acceptance.feature"
+      test_cmd: "cd frontend && npm run test -- --passWithNoTests"  # vitest
+      e2e_cmd: null                 # 未配線（playwright-bdd 導入時に埋める）
+
+    # ④ 品質ゲート -----------------------------------------------------------
+    quality_gates:
+      lint_cmd:         "cd frontend && npm run lint"          # eslint
+      format_check_cmd: "cd frontend && npm run format:check"  # prettier
+      typecheck_cmd:    "cd frontend && npm run typecheck"     # tsc --noEmit (strict)
+      build_cmd:        "cd frontend && npm run build"         # tsc + vite build
+
+# -----------------------------------------------------------------------------
+# guard: 編集時フック（guard_architecture）が消費する平坦な投影
+# -----------------------------------------------------------------------------
+# フックは PreToolUse で走り、実行環境に PyYAML が無い。そこで依存ゼロの stdlib
+# パーサで確実に読めるよう、上の components[].architecture から「フックが必要と
+# する分だけ」をここに block スタイルで平坦化して置く（＝機械が読む投影）。
+# 真の関門は import-linter / CI。フックはあくまで編集時の早期フィードバック。
+# 値は上の backend コンポーネントと一致させること（乖離したら CI が最終的に捕捉）。
+guard:
+  # domain/application への FW import を編集時に弾く対象パス
+  inner_paths:
+    - backend/app/domain/
+    - backend/app/application/
+  # inner_paths が import してはならない外部フレームワーク
+  forbidden_imports:
+    - fastapi
+    - starlette
+    - sqlalchemy
+    - pydantic
+    - pydantic_settings
+    - uvicorn
+  # 直接SQL禁止を編集時に弾く対象パス
+  raw_scope_paths:
+    - backend/app/
+  # 生SQL口（末尾の "(" は前方一致で判定）
+  forbidden_patterns:
+    - "text("
+    - "exec_driver_sql("
+
+# -----------------------------------------------------------------------------
+# 強制のかけ場所（横断）
+# -----------------------------------------------------------------------------
+# CI（.github/workflows/ci.yml）と pre-commit は、上の *_cmd / detect_cmd /
+# arch_lint_cmd / test_cmd を「読んで回す」のが理想（コマンドの二重管理を避ける）。
+# 現状は pre-commit と CI に実コマンドが直書きされており、このマニフェストが
+# 単一の真実になれば、そこから生成/参照する形へ寄せられる。
+enforcement:
+  # 「未テスト=未完了」ゲート: 各コンポーネントの test_cmd を必須実行にする。
+  # NOTE: 現行は最初の機能が入るまで空テスト（pytest exit5 / --passWithNoTests）を許容中。
+  test_required: true
+  run_on: [pre-commit, ci]

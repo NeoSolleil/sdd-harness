@@ -1,0 +1,109 @@
+# pre-commit: コミット時にローカルで品質チェックを自動実行する（ハーネス層③a）。
+# 有効化:  cd backend && uv sync && uv run pre-commit install
+# 手動実行: uv run pre-commit run --all-files   （backend ディレクトリから）
+#
+# すべて repo: local + language: system。プロジェクトのツール（uv / npm）をそのまま呼ぶ。
+# backend のフックは uv 経由、frontend のフックは npm 経由。
+# pass_filenames: false … プロジェクト全体を対象にするためファイル名を渡さない。
+# files: … 該当サービスのファイルが変更された時だけ走らせる（高速化）。
+minimum_pre_commit_version: "4.0.0"
+
+repos:
+  - repo: local
+    hooks:
+      # ---------- harness（ガード自己テスト・プロファイル契約） ----------
+      # ハーネスの強制層そのものを回帰テストする。stdlib のみ・数秒。
+      - id: harness-guard-tests
+        name: harness / guard self-tests
+        entry: python3 .claude/hooks/test_guards.py
+        language: system
+        files: ^\.claude/(hooks|profiles)/
+        pass_filenames: false
+
+      - id: harness-profile-validate
+        name: harness / profile contract validate
+        entry: python3 .claude/profiles/validate.py
+        language: system
+        files: ^\.claude/profiles/
+        pass_filenames: false
+
+      # ---------- backend (uv) ----------
+      - id: ruff-check
+        name: backend / ruff check
+        entry: bash -c 'cd backend && uv run ruff check .'
+        language: system
+        types: [python]
+        files: ^backend/
+        pass_filenames: false
+
+      - id: ruff-format
+        name: backend / ruff format --check
+        entry: bash -c 'cd backend && uv run ruff format --check .'
+        language: system
+        types: [python]
+        files: ^backend/
+        pass_filenames: false
+
+      - id: pyright
+        name: backend / pyright (strict)
+        entry: bash -c 'cd backend && uv run pyright'
+        language: system
+        types: [python]
+        files: ^backend/
+        pass_filenames: false
+
+      - id: import-linter
+        name: backend / import-linter (Clean Architecture)
+        entry: bash -c 'cd backend && uv run lint-imports'
+        language: system
+        types: [python]
+        files: ^backend/
+        pass_filenames: false
+
+      - id: xenon
+        name: backend / xenon (complexity)
+        entry: bash -c 'cd backend && uv run xenon --max-absolute B --max-modules B --max-average A app'
+        language: system
+        types: [python]
+        files: ^backend/
+        pass_filenames: false
+
+      - id: no-raw-sql
+        name: backend / no raw SQL (ORM only)
+        entry: backend/scripts/check_no_raw_sql.sh
+        language: system
+        types: [python]
+        files: ^backend/
+        pass_filenames: false
+
+      # ---------- frontend (npm) ----------
+      - id: eslint
+        name: frontend / eslint
+        entry: bash -c 'cd frontend && npm run lint'
+        language: system
+        files: ^frontend/
+        types_or: [ts, tsx, javascript, jsx]
+        pass_filenames: false
+
+      - id: prettier
+        name: frontend / prettier --check
+        entry: bash -c 'cd frontend && npm run format:check'
+        language: system
+        files: ^frontend/
+        pass_filenames: false
+
+      - id: tsc
+        name: frontend / tsc (strict typecheck)
+        entry: bash -c 'cd frontend && npm run typecheck'
+        language: system
+        files: ^frontend/
+        types_or: [ts, tsx]
+        pass_filenames: false
+
+      - id: dependency-cruiser
+        name: frontend / dependency-cruiser (architecture)
+        entry: bash -c 'cd frontend && npm run arch:check'
+        language: system
+        files: ^frontend/
+        types_or: [ts, tsx]
+        pass_filenames: false
