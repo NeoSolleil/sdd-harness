@@ -9,6 +9,8 @@ disable-model-invocation: true
 
 承認済みの仕様（requirements.md ＋ acceptance.feature）を、実装可能な**設計**に落とす。出力は `specs/<feature>/design.md` のみ。**コードは書かない。**
 
+> **このスキルは slash 専用の「進行役の台本」。** solution-analyst はこれを呼ばず、下の委譲で spawn される。
+>
 > **実行（進行役への指示）**: solution-analyst を **Agent ツールで spawn** して委譲する。進行役自身は design.md を書かない。委譲プロンプトには feature フォルダ・入力（承認済み requirements.md / acceptance.feature）・期待出力（design.md、`Status: Draft`）を明記する（サブエージェントはこの会話を引き継がない）。
 
 ## 最初に参照する

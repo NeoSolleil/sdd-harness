@@ -11,6 +11,8 @@ disable-model-invocation: true
 
 これは BDD の **Discovery** 工程。ここで固めた結果を、次の `specify` が EARS＋Gherkin に清書（Formulation）する。
 
+> **このスキルは slash 専用の「進行役の台本」。** ワーカー役エージェント（アナリスト）はこれを呼ばない——下の委譲で spawn される側。段階駆動スキル（discover / specify / plan / tasks / implement）は進行役だけが `/x` で起動し、ワーカーは参照スキル（`ubiquitous-language`・`bdd` 等）を craft の一次情報にする。
+>
 > **実行（進行役への指示）**: product-analyst・quality-analyst・solution-analyst を **Agent ツールで並行に spawn**（1メッセージで3呼び出し）し、3観点（スリーアミーゴス）の草案を集める。各アナリストは**観点をテキストで返すだけ**。**統合と discovery.md への記述は進行役が1箇所で行う**（同じファイルへ同時書き込みしない）。委譲プロンプトには要望の全文・feature フォルダ（決まっていれば）・期待する返答形式（🟡🔵🟢🔴）を明記する（サブエージェントはこの会話を引き継がない）。
 
 ## 最初に参照する

@@ -9,6 +9,8 @@ disable-model-invocation: true
 
 承認済みの `discovery.md`（Example Map）を、**機械検証可能な仕様**＝ EARS 要件＋Gherkin シナリオに清書（Formulation）する。**白紙から生成しない**：発見は前段の `discover`（段階0）で済ませ、ここはその成果を formal 化する工程。
 
+> **このスキルは slash 専用の「進行役の台本」。** scenario-author はこれを呼ばず、下の委譲で spawn される（EARS 記法の craft は `ears.md` を参照）。
+>
 > **実行（進行役への指示）**: scenario-author を **Agent ツールで spawn** して委譲する。進行役自身は requirements.md / acceptance.feature を書かない。委譲プロンプトには feature フォルダ・入力（承認済み discovery.md のパス）・期待出力（requirements.md ＋ acceptance.feature、`Status: Draft`）を明記する（サブエージェントはこの会話を引き継がない）。
 
 ## 出力（これだけを作る）

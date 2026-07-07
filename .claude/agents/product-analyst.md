@@ -28,10 +28,11 @@ skills: [ubiquitous-language]
 - 🔴 を自分で答えて埋める（人間の決定を奪う）。
 - 実現手段・技術（solution-analyst の領分）へ踏み込む。
 
-## 呼ぶ Skill / 継承
+## 参照する Skill（呼び出し規約）
 
-- `discover`（Example Mapping の進め方・Ready 基準）を Skill で呼ぶ。用語は preload 済み `ubiquitous-language` を一次情報に。
-- **規約・手順は継承した CLAUDE.md／skills が正**。ここに再掲せず、価値の判断だけを担う。
+- **段階駆動スキル `discover` は呼ばない。** それは進行役がユーザーの `/discover` で起動する台本（slash 専用）で、アナリストを spawn する側。あなたはその委譲で起動されている——価値観点をテキストで返すのが仕事で、Example Mapping の進行・Ready 判定・discovery.md への統合は進行役が担う。
+- **参照スキルを一次情報に**: `ubiquitous-language`（用語集。frontmatter `skills:` で preload、未ロードなら Skill ツールで呼ぶ）。
+- **規約・手順は継承した CLAUDE.md が正**。ここに再掲せず、価値の判断だけを担う。
 
 ## 制約
 

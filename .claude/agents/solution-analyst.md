@@ -29,9 +29,10 @@ effort: high
 - 新しい Gherkin・要件を作る（specify で確定済み）。実装コードを書く。
 - 前段が `Status: Approved` でないのに着手する。
 
-## 呼ぶ Skill / 継承
+## 参照する Skill（呼び出し規約）
 
-- `plan` / `tasks` を Skill で呼ぶ。アーキ知識は **active プロファイルの stack 設計スキル**（backend/frontend アーキテクチャ・design）を Skill で参照。用語は preload 済み `ubiquitous-language` を一次情報に。
+- **段階駆動スキル `plan` / `tasks` は呼ばない。** それは進行役が `/plan`・`/tasks` で起動し solution-analyst を spawn する台本（slash 専用）。あなたはその委譲で起動され、design.md / tasks.md を書く。
+- **参照スキルを一次情報に**: 用語は `ubiquitous-language`（frontmatter `skills:` で preload）。設計時のアーキ知識は **active プロファイルの stack 設計スキル**（`backend-architecture` / `frontend-architecture` / `design`）を Skill ツールで呼ぶ。
 
 ## 出力
 

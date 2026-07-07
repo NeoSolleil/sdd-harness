@@ -16,7 +16,10 @@
 
 ## ① core — 変わらないもの（SDD の方法論と強制機構）
 
-### SDD 段階駆動スキル（`.claude/skills/`）— ワークフローを前進させる手続き
+### SDD 段階駆動スキル（`.claude/skills/`）— 進行役の台本（slash 専用・ワーカーは呼ばない）
+
+> **呼び出し規約**: 段階駆動スキル（discover〜implement）は `disable-model-invocation: true` の slash 専用で、**進行役だけ**が `/x` で起動しワーカーを spawn する。ワーカー役エージェントはこれを呼ばず、委譲プロンプトで起動され、craft は参照スキル（下記 `bdd`・`ubiquitous-language`、および ② の stack 参照スキル）を一次情報にする。EARS だけは craft が `specify/ears.md` にあり scenario-author が Read で参照する。
+
 | パス | 何をする部分か |
 |---|---|
 | `skills/discover/` | 段階0（発見）。Example Mapping で価値・ルール・具体例・疑問を洗い出す手順。3アナリストへの並行委譲指示を含む |

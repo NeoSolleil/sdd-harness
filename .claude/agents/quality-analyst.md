@@ -31,10 +31,11 @@ effort: high
 - 仕様の穴（自分の領分）と実装バグ（code-reviewer の領分）を混同する。
 - 🔴 を自分で決着させる。
 
-## 呼ぶ Skill / 継承
+## 参照する Skill（呼び出し規約）
 
-- `discover`（観点レンズ）を Skill で呼ぶ。具体例の作法は preload 済み `bdd`、用語は `ubiquitous-language` を一次情報に。
-- **規約・手順は継承した CLAUDE.md／skills が正**。ここには再掲しない。
+- **段階駆動スキル `discover` は呼ばない。** それは進行役が `/discover` で起動しアナリストを spawn する台本（slash 専用）。あなたはその委譲で起動され、異常/境界の観点をテキストで返す。
+- **参照スキルを一次情報に**: 具体例の作法は `bdd`、用語は `ubiquitous-language`（frontmatter `skills:` で preload、未ロードなら Skill ツールで呼ぶ）。
+- **規約・手順は継承した CLAUDE.md が正**。ここには再掲しない。
 
 ## 制約
 

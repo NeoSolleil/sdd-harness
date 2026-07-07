@@ -9,6 +9,8 @@ disable-model-invocation: true
 
 承認済みの design.md を、順序付きの**作業リスト**に分解する。出力は `specs/<feature>/tasks.md` のみ。
 
+> **このスキルは slash 専用の「進行役の台本」。** solution-analyst はこれを呼ばず、下の委譲で spawn される。
+>
 > **実行（進行役への指示）**: solution-analyst を **Agent ツールで spawn** して委譲する。進行役自身は tasks.md を書かない。委譲プロンプトには feature フォルダ・入力（承認済み design.md）・期待出力（tasks.md、`Status: Draft`）を明記する（サブエージェントはこの会話を引き継がない）。
 
 > **既存の acceptance.feature を参照・グルーピングするだけ。新しい Gherkin シナリオも要件も作らない。**

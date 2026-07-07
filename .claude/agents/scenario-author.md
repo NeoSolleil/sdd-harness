@@ -27,9 +27,10 @@ skills: [ubiquitous-language, bdd]
 - 1シナリオに複数 When、Then に実装内部の主張。
 - 検証レベルタグ（`@backend`/`@e2e`）の付け忘れ。
 
-## 呼ぶ Skill / 継承
+## 参照する Skill（呼び出し規約）
 
-- `specify`（手順）＋同梱 `ears.md`（EARS 記法）を Skill で呼ぶ。Gherkin・タグは preload 済み `bdd`、用語は `ubiquitous-language` を一次情報に。
+- **段階駆動スキル `specify` は呼ばない。** それは進行役が `/specify` で起動し scenario-author を spawn する台本（slash 専用）。あなたはその委譲で起動され、requirements.md ＋ acceptance.feature を書く。
+- **参照スキルを一次情報に**: Gherkin・タグは `bdd`、用語は `ubiquitous-language`（frontmatter `skills:` で preload、未ロードなら Skill ツールで呼ぶ）。**EARS 記法は `.claude/skills/specify/ears.md` を Read して従う**（specify 本体は台本なので呼ばない）。
 
 ## 制約
 
