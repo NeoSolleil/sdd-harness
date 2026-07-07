@@ -1,5 +1,18 @@
 # SDD Harness — 仕様駆動開発の監督ハーネス（テンプレート）
 
+
+## License
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+Created and maintained by [NeoSoleil](https://github.com/NeoSolleil)
+
+
+
+---
+
 Claude Code 上で **SDD（仕様駆動開発）をフル装備で回す**ための、再利用可能な監督ハーネス。
 「AI が各段階を起草し、人間がゲートでレビューする」流れを、スキル・エージェント・ルール・フック・CI で支える。
 方針・構成・規約の正本は [CLAUDE.md](CLAUDE.md)（プロジェクト憲法）。
@@ -120,3 +133,4 @@ npm run lint && npm run format:check && npm run typecheck && npm run test && npm
 **CI はさらに GitHub Actions 前提**（`.github/workflows/ci.yml`）。ただし強制の本体である**編集時 Hooks（`.claude/hooks/`）と pre-commit はホスト非依存**で、CI が無くても同じ lint/型/アーキ/テストは pre-commit が走らせる（CI は冗長な最終関門）。別ホスト（GitLab 等）へは `ci.yml` を各 CI の設定に置き換えるだけ（コマンドは同じ）。
 
 > **修正が必要になったら**: CI 設定は「**スタック軸（どのコマンドか）＋ホスト軸（GitHub Actions / GitLab / …）**」の2軸で変わる。どちらの対応も、core（直下 `ci.yml`・`.pre-commit-config.yaml`）にベタ書きするのをやめ、**プロジェクト／プロファイル側が CI/pre-commit 設定を提供する**形に寄せる（`apply.py` が配置する rules/skills と同じ考え方）。単一スタック・GitHub 運用の間は現状で問題なし。
+
