@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SDD ハーネス 呼び出しマップ</title>
+<style>
+  :root {
+    --bg: #F7F7F3;
+    --surface: #FFFFFF;
+    --ink: #212936;
+    --muted: #5D6675;
+    --line: #E2E2D9;
+    --line-strong: #C9C9BD;
+
+    --orch: #4353C4;
+    --orch-soft: #EEF0FB;
+    --orch-line: #C4CAF0;
+
+    --worker: #0E7C66;
+    --worker-soft: #E8F4F0;
+    --worker-line: #BCDFD5;
+
+    --review: #995A16;
+    --review-soft: #F8EFE1;
+    --review-line: #E7CFA8;
+
+    --gate: #B3372F;
+    --gate-soft: #FBEDEB;
+    --gate-line: #ECC3BF;
+
+    --doc: #6B7280;
+    --doc-soft: #F1F1EC;
+
+    --mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
+    --sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", "Meiryo", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171C;
+      --surface: #1C2128;
+      --ink: #E8EAED;
+      --muted: #9AA3AF;
+      --line: #2B323C;
+      --line-strong: #3B434F;
+      --orch: #93A0F2;
+      --orch-soft: #23283F;
+      --orch-line: #3A4270;
+      --worker: #52C7AA;
+      --worker-soft: #1A2E29;
+      --worker-line: #2C4F45;
+      --review: #DBA35E;
+      --review-soft: #32291A;
+      --review-line: #59462A;
+      --gate: #E27E75;
+      --gate-soft: #392320;
+      --gate-line: #633934;
+      --doc: #9AA3AF;
+      --doc-soft: #242A32;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171C; --surface: #1C2128; --ink: #E8EAED; --muted: #9AA3AF;
+    --line: #2B323C; --line-strong: #3B434F;
+    --orch: #93A0F2; --orch-soft: #23283F; --orch-line: #3A4270;
+    --worker: #52C7AA; --worker-soft: #1A2E29; --worker-line: #2C4F45;
+    --review: #DBA35E; --review-soft: #32291A; --review-line: #59462A;
+    --gate: #E27E75; --gate-soft: #392320; --gate-line: #633934;
+    --doc: #9AA3AF; --doc-soft: #242A32;
+  }
+  :root[data-theme="light"] {
+    --bg: #F7F7F3; --surface: #FFFFFF; --ink: #212936; --muted: #5D6675;
+    --line: #E2E2D9; --line-strong: #C9C9BD;
+    --orch: #4353C4; --orch-soft: #EEF0FB; --orch-line: #C4CAF0;
+    --worker: #0E7C66; --worker-soft: #E8F4F0; --worker-line: #BCDFD5;
+    --review: #995A16; --review-soft: #F8EFE1; --review-line: #E7CFA8;
+    --gate: #B3372F; --gate-soft: #FBEDEB; --gate-line: #ECC3BF;
+    --doc: #6B7280; --doc-soft: #F1F1EC;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.75;
+    margin: 0;
+    padding: 0 20px 80px;
+  }
+  main { max-width: 1080px; margin: 0 auto; }
+
+  code, .mono { font-family: var(--mono); font-size: 0.92em; }
+
+  /* ---------- header ---------- */
+  header { padding: 56px 0 8px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.14em; color: var(--muted);
+    text-transform: uppercase; font-weight: 600;
+  }
+  h1 {
+    font-size: 30px; font-weight: 700; letter-spacing: 0.01em;
+    margin: 6px 0 0; line-height: 1.35; text-wrap: balance;
+  }
+  .thesis {
+    margin: 24px 0 0;
+    border: 1px solid var(--line-strong);
+    border-left: 4px solid var(--orch);
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.8;
+  }
+  .thesis .sub { display: block; font-size: 13px; font-weight: 400; color: var(--muted); margin-top: 6px; }
+  .thesis em { font-style: normal; color: var(--orch); }
+  .thesis em.w { color: var(--worker); }
+
+  /* ---------- sections ---------- */
+  section { margin-top: 56px; }
+  h2 {
+    font-size: 20px; font-weight: 700; margin: 0 0 4px;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  h2 .no {
+    font-family: var(--mono); font-size: 13px; color: var(--muted); font-weight: 500;
+  }
+  .lede { color: var(--muted); font-size: 13.5px; margin: 0 0 20px; max-width: 62em; }
+
+  /* ---------- legend ---------- */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px 22px;
+    padding: 14px 18px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    font-size: 13px;
+  }
+  .legend .item { display: flex; align-items: center; gap: 8px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+
+  /* ---------- chips ---------- */
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 9px; border-radius: 4px;
+    font-size: 12.5px; font-weight: 600; line-height: 1.7;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .chip.orch   { background: var(--orch-soft);   color: var(--orch);   border-color: var(--orch-line); }
+  .chip.worker { background: var(--worker-soft); color: var(--worker); border-color: var(--worker-line); }
+  .chip.review { background: var(--review-soft); color: var(--review); border-color: var(--review-line); }
+  .chip.gate   { background: var(--gate-soft);   color: var(--gate);   border-color: var(--gate-line); }
+  .chip.doc    { background: var(--doc-soft);    color: var(--doc);    border-color: var(--line-strong); font-weight: 500; }
+  .chip.skill  {
+    background: var(--surface); color: var(--worker);
+    border: 1px dashed var(--worker-line);
+    font-family: var(--mono); font-weight: 500; font-size: 11.5px;
+  }
+  .chip.script {
+    background: var(--surface); color: var(--orch);
+    border: 1px dashed var(--orch-line);
+    font-family: var(--mono); font-weight: 500; font-size: 11.5px;
+  }
+  .pbadge {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700;
+    padding: 0 4px; border-radius: 3px; line-height: 1.5;
+    background: var(--review-soft); color: var(--review); border: 1px solid var(--review-line);
+    vertical-align: 1px;
+  }
+
+  /* ---------- pipeline ---------- */
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .stage-head {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--surface) 60%, var(--bg));
+  }
+  .stage-no {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--muted); letter-spacing: 0.08em;
+  }
+  .stage-name { font-weight: 700; font-size: 15.5px; }
+  .stage-cmd {
+    font-family: var(--mono); font-size: 12.5px;
+    color: var(--orch); background: var(--orch-soft);
+    border: 1px solid var(--orch-line);
+    padding: 1px 8px; border-radius: 4px;
+  }
+  .stage-out { margin-left: auto; font-size: 12.5px; color: var(--muted); }
+  .stage-out code { color: var(--ink); }
+
+  .stage-body {
+    display: grid;
+    grid-template-columns: minmax(190px, 1fr) 34px minmax(260px, 1.9fr) 34px minmax(160px, 1fr);
+    align-items: stretch;
+    gap: 0;
+    padding: 16px 18px;
+  }
+  .cell { display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; }
+  .cell-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .arrow-col { display: flex; align-items: center; justify-content: center; }
+  .arrow-col svg { display: block; }
+  .arrow-col .lbl {
+    position: absolute; font-size: 10px; color: var(--muted);
+  }
+
+  .agent-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .refs { display: flex; flex-wrap: wrap; gap: 4px; padding-left: 2px; }
+  .refs-label { font-size: 11px; color: var(--muted); margin-right: 2px; }
+  .note { font-size: 11.5px; color: var(--muted); line-height: 1.6; }
+
+  .gate-connector {
+    display: flex; align-items: center; gap: 12px;
+    padding: 4px 0 4px 40px;
+    position: relative;
+  }
+  .gate-connector::before {
+    content: ""; position: absolute; left: 24px; top: -2px; bottom: -2px;
+    width: 2px; background: var(--gate-line);
+  }
+  .gate-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--gate-soft); color: var(--gate);
+    border: 1px solid var(--gate-line);
+    padding: 5px 14px; border-radius: 999px;
+    font-size: 12.5px; font-weight: 700;
+    margin: 10px 0;
+  }
+  .gate-pill code { font-size: 11.5px; font-weight: 500; }
+  .gate-doc { font-size: 12px; color: var(--muted); }
+
+  /* ---------- matrix ---------- */
+  .matrix-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  table.matrix {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 940px;
+    font-size: 12.5px;
+  }
+  .matrix th, .matrix td {
+    border-top: 1px solid var(--line);
+    padding: 7px 10px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .matrix thead th { border-top: none; }
+  .matrix .group-head th {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    padding: 9px 10px 5px;
+  }
+  .matrix .group-head .g-stage { background: var(--orch-soft); color: var(--orch); }
+  .matrix .group-head .g-ref { background: var(--worker-soft); color: var(--worker); }
+  .matrix .col-head th {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    color: var(--muted); padding: 4px 6px 8px;
+    white-space: nowrap;
+  }
+  .matrix .col-head .g-stage { background: var(--orch-soft); color: var(--orch); }
+  .matrix .col-head .g-ref { background: var(--worker-soft); color: var(--worker); }
+  .matrix td.c-stage { background: color-mix(in srgb, var(--orch-soft) 40%, var(--surface)); }
+  .matrix td.c-ref { background: color-mix(in srgb, var(--worker-soft) 35%, var(--surface)); }
+  .matrix th.rowh {
+    text-align: left; font-weight: 600; white-space: nowrap;
+    font-family: var(--mono); font-size: 12px;
+    padding-left: 14px;
+    border-left: 3px solid transparent;
+  }
+  .matrix tr.r-orch th.rowh { border-left-color: var(--orch); }
+  .matrix tr.r-worker th.rowh { border-left-color: var(--worker); }
+  .matrix tr.r-review th.rowh { border-left-color: var(--review); }
+  .matrix .rolecell { text-align: left; font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .matrix tr.sep th, .matrix tr.sep td {
+    border-top: 2px solid var(--line-strong);
+  }
+  .mark { font-weight: 700; font-size: 13px; }
+  .mark.slash { color: var(--orch); font-family: var(--mono); }
+  .mark.pre { color: var(--worker); }
+  .mark.call { color: var(--worker); }
+  .mark.read { color: var(--review); font-family: var(--mono); font-size: 11.5px; }
+  .matrix td:empty::after { content: "·"; color: var(--line-strong); font-weight: 400; }
+
+  .mark-legend {
+    display: flex; flex-wrap: wrap; gap: 8px 26px;
+    font-size: 12.5px; color: var(--muted);
+    padding: 12px 4px 0;
+  }
+  .mark-legend .mark { margin-right: 6px; }
+
+  /* ---------- implement loop ---------- */
+  .loop-board {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 22px 22px 18px;
+  }
+  .loop-row { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+  .lnode {
+    flex: 1 1 130px; min-width: 130px;
+    border-radius: 6px; padding: 10px 12px;
+    border: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 3px;
+    position: relative;
+  }
+  .lnode .who { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .lnode .what { font-size: 13px; font-weight: 600; line-height: 1.5; }
+  .lnode .detail { font-size: 11px; color: var(--muted); line-height: 1.55; }
+  .lnode.n-orch { background: var(--orch-soft); border-color: var(--orch-line); }
+  .lnode.n-orch .who { color: var(--orch); }
+  .lnode.n-worker { background: var(--worker-soft); border-color: var(--worker-line); }
+  .lnode.n-worker .who { color: var(--worker); }
+  .lnode.n-review { background: var(--review-soft); border-color: var(--review-line); }
+  .lnode.n-review .who { color: var(--review); }
+  .lnode.n-gate { background: var(--gate-soft); border-color: var(--gate-line); }
+  .lnode.n-gate .who { color: var(--gate); }
+  .larrow {
+    flex: 0 0 26px; display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+  }
+  .loop-return {
+    margin: 14px 4px 4px;
+    border: 1.5px dashed var(--review-line);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    height: 26px;
+    position: relative;
+  }
+  .loop-return .lbl {
+    position: absolute; left: 50%; transform: translateX(-50%); bottom: -12px;
+    background: var(--surface); padding: 0 12px;
+    font-size: 12px; color: var(--review); font-weight: 600; white-space: nowrap;
+  }
+  .loop-return .arrowhead {
+    position: absolute; left: -5px; top: -7px;
+    width: 0; height: 0;
+    border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-bottom: 8px solid var(--review-line);
+  }
+
+  /* ---------- footnotes ---------- */
+  .foot {
+    font-size: 12.5px; color: var(--muted);
+    border-top: 1px solid var(--line);
+    margin-top: 56px; padding-top: 18px;
+  }
+  .foot ul { margin: 8px 0 0; padding-left: 20px; }
+  .foot li { margin: 4px 0; }
+  .foot code { color: var(--ink); }
+
+  @media (max-width: 760px) {
+    .stage-body { grid-template-columns: 1fr; gap: 12px; }
+    .arrow-col { transform: rotate(90deg); height: 20px; }
+    .stage-out { margin-left: 0; width: 100%; }
+  }
+</style>
+
+</head>
+<body>
+<main>
+<header>
+  <p class="eyebrow">SDD Harness — Call Map</p>
+  <h1>どのエージェントが、どのスキルを呼ぶのか</h1>
+  <p class="thesis">
+    段階駆動スキルは<em>進行役</em>だけが起動する「台本」。ワーカーは<em class="w">参照スキル</em>だけを呼ぶ。逆はしない。
+    <span class="sub">段階駆動スキル（discover〜implement）は <code>disable-model-invocation: true</code> の slash 専用 — サブエージェントからは技術的に呼べない。craft の知識は参照スキルとして各ワーカーに preload される。</span>
+  </p>
+</header>
+
+<section>
+  <h2><span class="no">凡例</span>登場する4つの役割</h2>
+  <div class="legend">
+    <span class="item"><span class="swatch" style="background: var(--orch)"></span><strong>進行役</strong>（メインループ）— slash で台本を読み、ワーカーを spawn する</span>
+    <span class="item"><span class="swatch" style="background: var(--worker)"></span><strong>ワーカー役</strong>（6体）— 委譲で起動され、成果物を作る</span>
+    <span class="item"><span class="swatch" style="background: var(--review)"></span><strong>レビュー役</strong>（3体）— implement 後に独立検証する</span>
+    <span class="item"><span class="swatch" style="background: var(--gate)"></span><strong>人間ゲート</strong> — 各段階の承認（<code>Status: Approved</code>）</span>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">01</span>全体フロー — 5段階の実行順序</h2>
+  <p class="lede">各段階は「人間が <code>/コマンド</code> → 進行役が台本（段階駆動スキル）を読む → ワーカーを Agent ツールで spawn → 成果物 → 人間承認」で1サイクル。前段が Approved になるまで次段はフックが物理的にブロックする。</p>
+
+  <!-- stage 0 -->
+  <div class="stage">
+    <div class="stage-head">
+      <span class="stage-no">STAGE 0</span>
+      <span class="stage-name">discover — 発見</span>
+      <span class="stage-cmd">/discover &lt;アイデア&gt;</span>
+      <span class="stage-out">成果物: <code>specs/NNNN-name/discovery.md</code>（Example Map）</span>
+    </div>
+    <div class="stage-body">
+      <div class="cell">
+        <span class="cell-label">進行役が読む台本</span>
+        <span class="chip script">skills/discover</span>
+        <span class="note">Example Mapping の進行・Ready 基準・委譲指示</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">spawn するワーカー（3体並行・1メッセージ）</span>
+        <div class="agent-row">
+          <span class="chip worker">product-analyst</span>
+          <span class="chip worker">quality-analyst</span>
+          <span class="chip worker">solution-analyst</span>
+        </div>
+        <div class="refs"><span class="refs-label">参照:</span>
+          <span class="chip skill">ubiquitous-language</span>
+          <span class="chip skill">bdd（quality のみ）</span>
+        </div>
+        <span class="note">各自の観点（🟡🔵🟢🔴）を<strong>テキストで返すだけ</strong>。ファイルは書かない。</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">統合（唯一の例外）</span>
+        <span class="chip orch">進行役が統合</span>
+        <span class="note">3観点を discovery.md に1箇所で記述（ファイル競合の回避）。🔴疑問は人間に提示。</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate-connector">
+    <span class="gate-pill">🚧 人間承認 <code>discovery.md → Status: Approved</code></span>
+    <span class="gate-doc">🔴疑問がゼロになるまで specify に進めない</span>
+  </div>
+
+  <!-- stage 1 -->
+  <div class="stage">
+    <div class="stage-head">
+      <span class="stage-no">STAGE 1</span>
+      <span class="stage-name">specify — 仕様化</span>
+      <span class="stage-cmd">/specify &lt;feature&gt;</span>
+      <span class="stage-out">成果物: <code>requirements.md</code>（EARS）＋ <code>acceptance.feature</code>（Gherkin）</span>
+    </div>
+    <div class="stage-body">
+      <div class="cell">
+        <span class="cell-label">進行役が読む台本</span>
+        <span class="chip script">skills/specify</span>
+        <span class="note">3段構造・トレーサビリティ・差し戻し規則</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">spawn するワーカー</span>
+        <div class="agent-row"><span class="chip worker">scenario-author</span></div>
+        <div class="refs"><span class="refs-label">参照:</span>
+          <span class="chip skill">bdd</span>
+          <span class="chip skill">ubiquitous-language</span>
+          <span class="chip skill">specify/ears.md（Read）</span>
+        </div>
+        <span class="note">🔵Rule→EARS 要件、🟢Example→Gherkin シナリオへ清書。発明禁止（不足は discover へ差し戻し）。</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">出力</span>
+        <span class="chip doc">requirements.md</span>
+        <span class="chip doc">acceptance.feature</span>
+        <span class="note">Gherkin の一次著作はここ1回だけ。以後は参照・変換のみ。</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate-connector">
+    <span class="gate-pill">🚧 人間承認 <code>requirements.md → Status: Approved</code></span>
+    <span class="gate-doc">acceptance.feature は連動して凍結</span>
+  </div>
+
+  <!-- stage 2 -->
+  <div class="stage">
+    <div class="stage-head">
+      <span class="stage-no">STAGE 2</span>
+      <span class="stage-name">plan — 設計</span>
+      <span class="stage-cmd">/plan &lt;feature&gt;</span>
+      <span class="stage-out">成果物: <code>design.md</code>（DDD・API 契約・データモデル）</span>
+    </div>
+    <div class="stage-body">
+      <div class="cell">
+        <span class="cell-label">進行役が読む台本</span>
+        <span class="chip script">skills/plan</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">spawn するワーカー</span>
+        <div class="agent-row"><span class="chip worker">solution-analyst</span></div>
+        <div class="refs"><span class="refs-label">参照:</span>
+          <span class="chip skill">ubiquitous-language</span>
+          <span class="chip skill">backend-architecture <span class="pbadge">P</span></span>
+          <span class="chip skill">frontend-architecture <span class="pbadge">P</span></span>
+          <span class="chip skill">design <span class="pbadge">P</span></span>
+        </div>
+        <span class="note">stack 設計スキルは Skill ツールで随時呼ぶ（<span class="pbadge">P</span> = active プロファイル提供）。</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">出力</span>
+        <span class="chip doc">design.md</span>
+        <span class="note">人間ゲート向けの論点を明示。決定は文書に追記。</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate-connector">
+    <span class="gate-pill">🚧 人間承認 <code>design.md → Status: Approved</code></span>
+    <span class="gate-doc">設計の論点に人間が回答してから承認</span>
+  </div>
+
+  <!-- stage 3 -->
+  <div class="stage">
+    <div class="stage-head">
+      <span class="stage-no">STAGE 3</span>
+      <span class="stage-name">tasks — 作業分解</span>
+      <span class="stage-cmd">/tasks &lt;feature&gt;</span>
+      <span class="stage-out">成果物: <code>tasks.md</code>（TDD ビルド順の作業リスト）</span>
+    </div>
+    <div class="stage-body">
+      <div class="cell">
+        <span class="cell-label">進行役が読む台本</span>
+        <span class="chip script">skills/tasks</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">spawn するワーカー</span>
+        <div class="agent-row"><span class="chip worker">solution-analyst</span></div>
+        <div class="refs"><span class="refs-label">参照:</span>
+          <span class="chip skill">ubiquitous-language</span>
+        </div>
+        <span class="note">既存シナリオを <code>@R-x</code> で参照・グルーピングするだけ。新規シナリオ・要件は作らない。</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">出力</span>
+        <span class="chip doc">tasks.md</span>
+        <span class="note">内側の層→外側の順・test-first で順序付け。</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate-connector">
+    <span class="gate-pill">🚧 人間承認 <code>tasks.md → Status: Approved</code></span>
+    <span class="gate-doc">承認されるまで implement のフックが着手をブロック</span>
+  </div>
+
+  <!-- stage 4 -->
+  <div class="stage">
+    <div class="stage-head">
+      <span class="stage-no">STAGE 4</span>
+      <span class="stage-name">implement — 実装（TDD）</span>
+      <span class="stage-cmd">/implement &lt;feature&gt;</span>
+      <span class="stage-out">成果物: テスト＋最小実装（red→green→refactor）</span>
+    </div>
+    <div class="stage-body">
+      <div class="cell">
+        <span class="cell-label">進行役が読む台本</span>
+        <span class="chip script">skills/implement</span>
+        <span class="note">委譲・完了後レビューのループを駆動</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">spawn するワーカー（独立タスクなら並行）</span>
+        <div class="agent-row">
+          <span class="chip worker">backend-engineer <span class="pbadge">P</span></span>
+          <span class="chip worker">frontend-engineer <span class="pbadge">P</span></span>
+        </div>
+        <div class="refs"><span class="refs-label">参照:</span>
+          <span class="chip skill">backend-architecture <span class="pbadge">P</span></span>
+          <span class="chip skill">frontend-architecture <span class="pbadge">P</span></span>
+          <span class="chip skill">e2e-testing <span class="pbadge">P</span></span>
+          <span class="chip skill">bdd</span>
+          <span class="chip skill">ubiquitous-language</span>
+          <span class="chip skill">design <span class="pbadge">P</span></span>
+        </div>
+        <span class="note">委譲プロンプトで担当タスク（tasks.md の ID）と対象シナリオ（<code>@R-x</code>）を受け取る。</span>
+      </div>
+      <div class="arrow-col"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M0 7h16M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg></div>
+      <div class="cell">
+        <span class="cell-label">完了後レビュー（3体並行）</span>
+        <div class="agent-row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+          <span class="chip review">spec-compliance</span>
+          <span class="chip review">test-coverage</span>
+          <span class="chip review">code-reviewer</span>
+        </div>
+        <span class="note">詳細は下の「03 implement のループ」へ。</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate-connector">
+    <span class="gate-pill">🏁 3体 PASS ＋ 人間の最終確認 → コミット指示</span>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">02</span>マトリクス — 誰がどのスキルを呼ぶか（一目で規約が見える表）</h2>
+  <p class="lede">
+    左の藍色ブロック（段階駆動）に印が付くのは<strong>進行役の行だけ</strong>、右の緑ブロック（参照）に印が付くのは<strong>ワーカー／レビュー役の行だけ</strong>。
+    この「対角の空白」が呼び出し規約そのもの。
+  </p>
+  <div class="matrix-wrap">
+    <table class="matrix">
+      <thead>
+        <tr class="group-head">
+          <th colspan="2"></th>
+          <th colspan="5" class="g-stage">段階駆動スキル（slash 専用・進行役の台本）</th>
+          <th colspan="7" class="g-ref">参照スキル（ワーカーの一次情報）</th>
+        </tr>
+        <tr class="col-head">
+          <th style="text-align:left; padding-left:14px;">エージェント</th>
+          <th style="text-align:left;">起動される段階</th>
+          <th class="g-stage">discover</th>
+          <th class="g-stage">specify</th>
+          <th class="g-stage">plan</th>
+          <th class="g-stage">tasks</th>
+          <th class="g-stage">implement</th>
+          <th class="g-ref">ubiq-lang</th>
+          <th class="g-ref">bdd</th>
+          <th class="g-ref">backend-arch <span class="pbadge">P</span></th>
+          <th class="g-ref">frontend-arch <span class="pbadge">P</span></th>
+          <th class="g-ref">e2e-testing <span class="pbadge">P</span></th>
+          <th class="g-ref">design <span class="pbadge">P</span></th>
+          <th class="g-ref">ears.md</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="r-orch">
+          <th class="rowh">進行役（メインループ）</th>
+          <td class="rolecell">常駐（人間の /x で台本を読む）</td>
+          <td class="c-stage"><span class="mark slash" title="slash で起動">／</span></td>
+          <td class="c-stage"><span class="mark slash">／</span></td>
+          <td class="c-stage"><span class="mark slash">／</span></td>
+          <td class="c-stage"><span class="mark slash">／</span></td>
+          <td class="c-stage"><span class="mark slash">／</span></td>
+          <td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td>
+        </tr>
+        <tr class="r-worker sep">
+          <th class="rowh">product-analyst</th>
+          <td class="rolecell">discover（価値観点）</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre" title="preload">●</span></td>
+          <td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td>
+        </tr>
+        <tr class="r-worker">
+          <th class="rowh">quality-analyst</th>
+          <td class="rolecell">discover（QA 観点）</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td>
+        </tr>
+        <tr class="r-worker">
+          <th class="rowh">solution-analyst</th>
+          <td class="rolecell">discover（実現性）／ plan ／ tasks</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"></td>
+          <td class="c-ref"><span class="mark call" title="Skill ツールで随時呼ぶ">◐</span></td>
+          <td class="c-ref"><span class="mark call">◐</span></td>
+          <td class="c-ref"></td>
+          <td class="c-ref"><span class="mark call">◐</span></td>
+          <td class="c-ref"></td>
+        </tr>
+        <tr class="r-worker">
+          <th class="rowh">scenario-author</th>
+          <td class="rolecell">specify</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td>
+          <td class="c-ref"><span class="mark read" title="Read で参照">R</span></td>
+        </tr>
+        <tr class="r-worker">
+          <th class="rowh">backend-engineer <span class="pbadge">P</span></th>
+          <td class="rolecell">implement（backend）</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td>
+        </tr>
+        <tr class="r-worker">
+          <th class="rowh">frontend-engineer <span class="pbadge">P</span></th>
+          <td class="rolecell">implement（frontend）</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"><span class="mark call">◐</span></td>
+          <td class="c-ref"></td>
+        </tr>
+        <tr class="r-review sep">
+          <th class="rowh">spec-compliance</th>
+          <td class="rolecell">implement 後レビュー（仕様適合）</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td>
+        </tr>
+        <tr class="r-review">
+          <th class="rowh">test-coverage</th>
+          <td class="rolecell">implement 後レビュー（テスト網羅）</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td>
+        </tr>
+        <tr class="r-review">
+          <th class="rowh">code-reviewer</th>
+          <td class="rolecell">implement 後レビュー（コード品質）</td>
+          <td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td><td class="c-stage"></td>
+          <td class="c-ref"><span class="mark pre">●</span></td>
+          <td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td><td class="c-ref"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="mark-legend">
+    <span><span class="mark slash">／</span>slash で起動（人間の <code>/x</code> → 進行役が台本として読む）</span>
+    <span><span class="mark pre">●</span>preload（frontmatter <code>skills:</code> で常時ロード）</span>
+    <span><span class="mark call">◐</span>必要時に Skill ツールで呼ぶ</span>
+    <span><span class="mark read">R</span>Read でファイル参照（<code>skills/specify/ears.md</code>）</span>
+    <span><span class="pbadge">P</span>active プロファイル提供（<code>profiles/&lt;id&gt;/</code> が正、<code>apply.py</code> が配置）</span>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">03</span>implement のループ — 実装〜レビューの反復</h2>
+  <p class="lede">実装が緑になるたびにレビュー3体が並行で回り、指摘があれば engineer に再委譲。<strong>3体すべて PASS ＋人間承認</strong>まで反復する。</p>
+  <div class="loop-board">
+    <div class="loop-row">
+      <div class="lnode n-orch">
+        <span class="who">進行役</span>
+        <span class="what">① engineer へ委譲</span>
+        <span class="detail">tasks.md の ID ＋ 対象シナリオ <code>@R-x</code> を明記して spawn</span>
+      </div>
+      <div class="larrow">→</div>
+      <div class="lnode n-worker">
+        <span class="who">engineer</span>
+        <span class="what">② red → green → refactor</span>
+        <span class="detail">シナリオを選択的にバインド → 失敗確認 → 最小実装 → 品質ゲート緑</span>
+      </div>
+      <div class="larrow">→</div>
+      <div class="lnode n-review">
+        <span class="who">レビュー役 ×3（並行）</span>
+        <span class="what">③ 独立検証</span>
+        <span class="detail">spec-compliance ／ test-coverage ／ code-reviewer。確信度の低い指摘は general-purpose を1段だけ spawn して反証</span>
+      </div>
+      <div class="larrow">→</div>
+      <div class="lnode n-gate">
+        <span class="who">人間ゲート</span>
+        <span class="what">④ 3体 PASS → 最終確認</span>
+        <span class="detail">テスト・ゲート・レビュー報告を確認してコミット指示</span>
+      </div>
+    </div>
+    <div class="loop-return">
+      <span class="arrowhead"></span>
+      <span class="lbl">指摘あり → 該当 engineer に再委譲して修正 → レビュー再実行（③へ戻る）</span>
+    </div>
+  </div>
+</section>
+
+<div class="foot">
+  <strong style="color: var(--ink);">補足（規約の細部）</strong>
+  <ul>
+    <li>委譲は文章上の約束ではなく、進行役が <strong>Agent ツールで実際に spawn</strong> する。サブエージェントは会話履歴を引き継がないため、委譲プロンプトに feature フォルダ・入力・期待出力を明記する。独立した複数の委譲は1メッセージで並行に。</li>
+    <li>進行役は段階成果物を自分で書かない。<strong>唯一の例外は discover の統合</strong>（3アナリストのテキストを discovery.md に1箇所でまとめる）。</li>
+    <li><span class="pbadge">P</span> 付きは stack profile（②）が正で、<code>apply.py</code> が <code>.claude/</code> へ配置する生成物（④）。直すときは必ず <code>profiles/&lt;id&gt;/</code> 側を編集する。</li>
+    <li>順序・凍結は散文でなくフックが強制する: 前段が <code>Status: Approved</code> でないと次段の書き込みは <code>guard_sdd_gates</code> が deny。<code>Status: Approved</code> の書き込み自体は人間の確認ダイアログ（ask）。</li>
+  </ul>
+</div>
+</main>
+</body>
+</html>

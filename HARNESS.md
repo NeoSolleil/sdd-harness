@@ -2,6 +2,7 @@
 
 このハーネスを**他のプロジェクトへ持ち込むとき**に、どこをそのまま使い、どこを差し替え・記入するかの台帳。
 各部が「何をする部分か」も併記する。概要は [README.md](README.md)、日々の運用は [USAGE.md](USAGE.md)、規約の正本は [CLAUDE.md](CLAUDE.md)。
+エージェント×スキルの呼び出し規約と5段階の実行順序の**図解**は [docs/sdd-call-map.html](docs/sdd-call-map.html)（ブラウザで開く）。
 
 ## 4つの区分
 
